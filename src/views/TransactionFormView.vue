@@ -1,32 +1,29 @@
 <script  setup lang="ts">
 
-import { inject, type Ref } from "vue";
 import { useRouter } from "vue-router";
 import TransactionFrom from "@/components/TransactionForm.vue";
 
  const route = useRouter();
-const dataInfo = inject<
-  Ref<
-    {
-      id:number,
-      description: string,
-      categorie:string,
-      date: Date,
-      montant: bigint,
-    }[]
-  >
->("dataInfo")!;
 
-function Ajoutertransac(date :Date,description:string,categorie:string,montant :bigint){
-  const newId = dataInfo.value.length + 1;
-  dataInfo.value.push({
-    id: newId,
-    description: description,
-    categorie : categorie,
-    date:date,
-    montant: montant
+
+ async function Ajoutertransac(date :Date,description:string,montant :bigint,categoryId:number){
+  const UrlApi = await fetch("http://localhost:3000/transactions",{
+        method :"POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body :JSON.stringify({
+          description: description,
+          date:date.toISOString(),
+          montant:Number(montant),
+          categoryId :categoryId,
+        })
   });
-  route.push("/");
+  if(UrlApi.ok){
+    route.push("/");
+  } else{
+    ///
+  }
 }
 </script>
 
